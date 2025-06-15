@@ -864,28 +864,8 @@ impl Config {
     }
 
     fn get_auto_id() -> Option<String> {
-        #[cfg(any(target_os = "android", target_os = "ios"))]
-        {
-            return Some(
-                rand::thread_rng()
-                    .gen_range(1_000_000_000..2_000_000_000)
-                    .to_string(),
-            );
-        }
-
-        #[cfg(not(any(target_os = "android", target_os = "ios")))]
-        {
-            let mut id = 0u32;
-            if let Ok(Some(ma)) = mac_address::get_mac_address() {
-                for x in &ma.bytes()[2..] {
-                    id = (id << 8) | (*x as u32);
-                }
-                id &= 0x1FFFFFFF;
-                Some(id.to_string())
-            } else {
-                None
-            }
-        }
+        let mut rng = rand::thread_rng();
+        Some(rng.gen_range(100_000..1_000_000).to_string())
     }
 
     pub fn get_auto_password(length: usize) -> String {

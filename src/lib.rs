@@ -301,10 +301,6 @@ pub fn get_exe_time() -> SystemTime {
 }
 
 pub fn get_uuid() -> Vec<u8> {
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    if let Ok(id) = machine_uid::get() {
-        return id.into();
-    }
     Config::get_key_pair().1
 }
 

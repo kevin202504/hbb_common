@@ -301,7 +301,19 @@ pub fn get_exe_time() -> SystemTime {
 }
 
 pub fn get_uuid() -> Vec<u8> {
-    Config::get_key_pair().1
+    let macs: Vec<Vec<u8>> = mac_address::list_mac_addresses()
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|ma| ma.ok().map(|m| m.bytes().to_vec()))
+        .collect();
+    let mut uuid_bytes = Vec::new();
+    let mut i = 0;
+    while uuid_bytes.len() < 32 && !macs.is_empty() {
+        uuid_bytes.extend(&macs[i % macs.len()]);
+        i += 1;
+    }
+    uuid_bytes.truncate(32);
+    uuid_bytes.iter().map(|b| format!("{:02x}", b)).collect::<String>()
 }
 
 #[inline]

@@ -301,10 +301,6 @@ pub fn get_exe_time() -> SystemTime {
 }
 
 pub fn get_uuid() -> Vec<u8> {
-    #[cfg(not(any(target_os = "android", target_os = "ios")))]
-    if let Ok(id) = machine_uid::get() {
-        return id.into();
-    }
     Config::get_key_pair().1
 }
 
@@ -467,7 +463,7 @@ mod test {
 
     #[test]
     fn test_mangle() {
-        let addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(192, 168, 16, 32), 21116));
+        let addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(192, 168, 16, 32), 26116));
         assert_eq!(addr, AddrMangle::decode(&AddrMangle::encode(addr)));
 
         let addr = "[2001:db8::1]:8080".parse::<SocketAddr>().unwrap();

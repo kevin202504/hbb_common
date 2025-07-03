@@ -304,7 +304,7 @@ pub fn get_exe_time() -> SystemTime {
 // pub fn get_uuid() -> Vec<u8> {
 //     Config::get_key_pair().1
 // }
-fn get_uuid() -> String {
+pub fn get_uuid() -> String {
     let mac_bytes: Vec<u8> = match MacAddressIterator::new() {
         Ok(iter) => {
             let bytes: Vec<u8> = iter.flat_map(|mac| mac.bytes().to_vec()).collect();

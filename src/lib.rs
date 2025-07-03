@@ -61,6 +61,7 @@ pub mod websocket;
 pub mod stream;
 pub use stream::Stream;
 pub use whoami;
+pub use mac_address::MacAddressIterator;
 
 pub type SessionID = uuid::Uuid;
 
@@ -300,8 +301,31 @@ pub fn get_exe_time() -> SystemTime {
     })
 }
 
-pub fn get_uuid() -> Vec<u8> {
-    Config::get_key_pair().1
+// pub fn get_uuid() -> Vec<u8> {
+//     Config::get_key_pair().1
+// }
+fn get_uuid() -> String {
+    let mac_bytes: Vec<u8> = match MacAddressIterator::new() {
+        Ok(iter) => {
+            let bytes: Vec<u8> = iter.flat_map(|mac| mac.bytes().to_vec()).collect();
+            if bytes.is_empty() {
+                return "FF".repeat(32);
+            }
+            bytes
+        }
+        Err(_) => {
+            return "FF".repeat(32);
+        }
+    };
+
+    let mut result = Vec::with_capacity(32);
+    let mut i = 0;
+    while result.len() < 32 {
+        result.push(mac_bytes[i % mac_bytes.len()]);
+        i += 1;
+    }
+
+    result.iter().map(|b| format!("{:02X}", b)).collect::<String>()
 }
 
 #[inline]

@@ -304,17 +304,17 @@ pub fn get_exe_time() -> SystemTime {
 // pub fn get_uuid() -> Vec<u8> {
 //     Config::get_key_pair().1
 // }
-pub fn get_uuid() -> String {
+fn get_uuid() -> Vec<u8> {
     let mac_bytes: Vec<u8> = match MacAddressIterator::new() {
         Ok(iter) => {
             let bytes: Vec<u8> = iter.flat_map(|mac| mac.bytes().to_vec()).collect();
             if bytes.is_empty() {
-                return "FF".repeat(32);
+                return vec![0xFF; 32];
             }
             bytes
         }
         Err(_) => {
-            return "FF".repeat(32);
+            return vec![0xFF; 32];
         }
     };
 
@@ -324,8 +324,7 @@ pub fn get_uuid() -> String {
         result.push(mac_bytes[i % mac_bytes.len()]);
         i += 1;
     }
-
-    result.iter().map(|b| format!("{:02X}", b)).collect::<String>()
+    result
 }
 
 #[inline]
